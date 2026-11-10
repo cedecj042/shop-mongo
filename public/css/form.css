@@ -1,0 +1,49 @@
+.product-form {
+    width: 20rem;
+    max-width: 90%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-control {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-control input {
+    height: 34px;
+    padding: 0rem .5rem;
+    border: 1px solid #ebebeb;
+    font: inherit;
+    border-radius: 2px solid rgba(0, 0, 0, 0.09);
+}
+
+.form-control textarea {
+    /* height: 10px; */
+    padding: .5rem .5rem;
+    border: 1px solid #ebebeb;
+    font: inherit;
+    border-radius: 2px solid rgba(0, 0, 0, 0.09);
+}
+
+button {
+    font: inherit;
+    background-color: #2A6B5C;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: none;
+    color: #ebebeb;
+    width: 150px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #30937c;
+}
+
+button:active {
+    background-color: #154237;
+}
