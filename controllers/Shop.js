@@ -58,9 +58,9 @@ exports.getCart = (req, res, next) => {
 exports.postCart = (req, res, next) => {
     const prodId = req.body.productId;
     Product.findById(prodId)
-        .then(product =>{
+        .then(product => {
             return req.user.addToCart(product);
-        }).then(result =>{
+        }).then(result => {
             console.log(result);
             res.redirect('/');
         })
@@ -69,29 +69,33 @@ exports.postCart = (req, res, next) => {
 
 
 exports.getOrders = (req, res, next) => {
-    const cart = Cart.fetchAll();
 
-    const products = []
-    for (let product of cart) {
-        products.push(product);
-    }
-    res.render('shop/orders', {
-        products: products,
-        pageTitle: 'Orders',
-        path: "/orders",
-    });
+    req.user
+        .getOrders()
+        .then(orders => {
+            res.render('shop/orders', {
+                orders: orders,
+                pageTitle: 'Orders',
+                path: "/orders",
+            });
+        })
 }
 
 
 exports.postCartDeleteProducts = (req, res, next) => {
     const prodId = req.body.productId;
     req.user.deleteItemFromCart(prodId)
-    .then(result =>{
-        console.log('Product removed from cart');
-        res.redirect('/cart');
-    }).catch(err => console.log(err));
+        .then(result => {
+            console.log('Product removed from cart');
+            res.redirect('/cart');
+        }).catch(err => console.log(err));
 }
 
-exports.postOrders = (req,res,next) =>{
-
+exports.postCreateOrders = (req, res, next) => {
+    let fetchedCart;
+    req.user.addOrder()
+        .then(result => {
+            console.log('Created a new order!')
+            res.redirect('/cart');
+        }).catch(err => console.log(err));
 }
