@@ -2,7 +2,7 @@ const mongoDb = require('mongodb');
 const { getDb } = require('../util/database');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-
+const ObjectId = mongoDb.ObjectId;
 
 class User {
     constructor(name, email, password, cart = { items: [] }, id = null) {
@@ -10,7 +10,7 @@ class User {
         this.email = email;
         this.password = password ? password : null;
         this.cart = cart;
-        this._id = id ? new mongoDb.ObjectId(id) : null;
+        this._id = id ? new ObjectId(id) : null;
     }
 
     async save() {
@@ -19,7 +19,7 @@ class User {
         this.password = await bcrypt.hash(this.password, saltRounds);
 
         if (this._id) {
-            dbOp = db.collection('users').updateOne({ _id: new mongoDb.ObjectId(this._id) }, { $set: this });
+            dbOp = db.collection('users').updateOne({ _id: new ObjectId(this._id) }, { $set: this });
         }
         else {
             dbOp = db.collection('users').insertOne(this);
@@ -42,7 +42,7 @@ class User {
             updatedCartItems[cartProductIndex].quantity = newQuantity;
         } else {
             updatedCartItems.push({
-                productId: new mongoDb.ObjectId(product._id),
+                productId: new ObjectId(product._id),
                 quantity: newQuantity
             });
         }
@@ -51,7 +51,7 @@ class User {
 
         const db = getDb();
         return db.collection('users').updateOne(
-            { _id: new mongoDb.ObjectId(this._id) },
+            { _id: new ObjectId(this._id) },
             { $set: { cart: updatedCart } }
         );
     }
@@ -77,7 +77,7 @@ class User {
     }
 
 
-    deleteItemFromCart(prodId){
+    deleteItemFromCart(prodId) {
         const db = getDb();
 
         const updatedCartItems = this.cart.items.filter(item => {
@@ -85,39 +85,45 @@ class User {
         })
 
         return db.collection('users').updateOne(
-            {_id: new mongoDb.ObjectId(this._id)},
-            {$set: {cart: {items: updatedCartItems}}}
+            { _id: new ObjectId(this._id) },
+            { $set: { cart: { items: updatedCartItems } } }
         );
     }
 
-    addOrder(){
-        const db= getDb();
-        const order = {
-            items: this.cart.items, 
-        user: {
-            _id: new mongoDb.ObjectId(this._id),
-            name: this.name, 
-            email: this.email
-        }
+    addOrder() {
+        const db = getDb();
 
-        }
-        return db.collection('orders')
-            .insertOne()
-            .then(result =>{
-                this.cart = { items: []};
+        return this.getCart()
+            .then(products => {
+                const order = {
+                    items: products,
+                    user: {
+                        _id: new ObjectId(this._id),
+                        name: this.name,
+                    }
+                }
+                return db.collection('orders').insertOne(order)
+            })
+            .then(result => {
+                this.cart = { items: [] };
 
                 return db.collection('users')
-                .updatedOne(
-                    {_id: new mongoDb.ObjectId(this._id)},
-                    {$set: {cart: {items: []}}}
-                );
+                    .updateOne(
+                        { _id: new ObjectId(this._id) },
+                        { $set: { cart: { items: [] } } }
+                    );
             })
+    }
+
+    getOrders(){
+        const db = getDb();
+        return db.collection('orders').find({'user._id': new ObjectId(this._id)}).toArray();
     }
 
     static findById(userId) {
         const db = getDb();
         return db.collection('users')
-            .findOne({ _id: new mongoDb.ObjectId(userId) })
+            .findOne({ _id: new ObjectId(userId) })
             .then(user => {
                 return user;
             })

@@ -1,0 +1,13 @@
+main{
+    display: flex;
+    flex-direction: column;
+    gap:20px;
+    justify-content: center;
+}
+
+.centered{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
