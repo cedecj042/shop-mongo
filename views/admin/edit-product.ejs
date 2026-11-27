@@ -5,7 +5,7 @@
 <body>
   <%- include('../includes/navigation.ejs') %>
   <main>
-    <form action="/admin/<% if(editing) { %>users/edit <% } else { %>users/create<%} %>" method="POST" class="product-form">
+    <form action="/admin/<% if(editing) { %>products/edit <% } else { %>products/create<%} %>" method="POST" class="product-form">
       <h1 style="margin-bottom: 0;"><% if(editing) { %> Edit <% } else { %> Add  <%} %> Product Form</h1>
 
       <div class="form-control">
