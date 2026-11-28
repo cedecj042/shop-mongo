@@ -7,6 +7,16 @@
     gap: 15px;
 }
 
+.signup-form , .login-form {
+    width: 25rem;
+    padding: 7rem 0rem;
+    max-width: 90%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 .form-control {
     display: flex;
     flex-direction: column;
